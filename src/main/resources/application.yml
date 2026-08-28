@@ -1,0 +1,62 @@
+spring:
+  application:
+    name: Finexa
+  datasource:
+    url: ${FINEXA_DB_URL:jdbc:postgresql://localhost:5432/finexa}
+    username: ${FINEXA_DB_USERNAME:finexa}
+    password: ${FINEXA_DB_PASSWORD:finexa}
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  kafka:
+    bootstrap-servers: ${FINEXA_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: finexa-default-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "org.example.finexa.*,java.util.*,java.lang.*"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  data:
+    redis:
+      host: ${FINEXA_REDIS_HOST:localhost}
+      port: ${FINEXA_REDIS_PORT:6379}
+
+server:
+  error:
+    include-message: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+
+finexa:
+  security:
+    jwt-secret: ${FINEXA_JWT_SECRET:dev-only-change-this-secret-before-production-32-bytes-minimum}
+    token-ttl: PT2H
+  generator:
+    enabled: ${FINEXA_GENERATOR_ENABLED:false}
+    interval-ms: ${FINEXA_GENERATOR_INTERVAL_MS:5000}
+  kafka:
+    topics:
+      usage-events: usage-events
+      cost-rollup-events: cost-rollup-events
+      webhook-outbox-events: webhook-outbox-events
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  flyway:
+    locations: classpath:db/migration,classpath:db/dev-migration
