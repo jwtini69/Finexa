@@ -1,0 +1,217 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" width="100%" height="100%" style="background:#ffffff; font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <defs>
+    <style>
+      .title { font-family: 'Newsreader', Georgia, serif; font-style: italic; fill: #17191c; font-size: 26px; }
+      .sub-title { font-size: 13px; fill: #777b86; font-weight: 400; }
+      .box { fill: #f2f2f3; stroke: #e5e5e7; stroke-width: 1px; rx: 16px; }
+      .box-white { fill: #ffffff; stroke: rgba(4,23,43,0.08); stroke-width: 1px; rx: 14px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.03)); }
+      .box-accent { fill: #fbe1d1; stroke: #5d2a1a; stroke-opacity: 0.2; stroke-width: 1px; rx: 14px; }
+      .box-dark { fill: #17191c; rx: 14px; }
+      .header-text { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; fill: #979799; }
+      .node-title { font-size: 15px; font-weight: 600; fill: #17191c; }
+      .node-desc { font-size: 12px; fill: #777b86; line-height: 1.4; }
+      .badge { font-size: 11px; font-weight: 500; font-family: monospace; }
+      .arrow { stroke: #17191c; stroke-width: 1.5px; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+      .arrow-accent { stroke: #5d2a1a; stroke-width: 2px; fill: none; stroke-linecap: round; }
+      .arrow-dashed { stroke: #777b86; stroke-width: 1.5px; stroke-dasharray: 4 4; fill: none; }
+    </style>
+    <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <polygon points="0 1, 7 4, 0 7" fill="#17191c" />
+    </marker>
+    <marker id="arrowhead-accent" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <polygon points="0 1, 7 4, 0 7" fill="#5d2a1a" />
+    </marker>
+    <marker id="arrowhead-slate" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <polygon points="0 1, 7 4, 0 7" fill="#777b86" />
+    </marker>
+  </defs>
+
+  <!-- 1. Header & Title Banner -->
+  <g transform="translate(40, 36)">
+    <text x="0" y="24" class="title">Finexa Architecture &amp; Data Pipeline</text>
+    <text x="0" y="44" class="sub-title">Multi-Tenant Ingestion, Continuous Hypertables, Two-Stage Seasonal Z-Score &amp; Transactional Outbox</text>
+  </g>
+
+  <!-- 2. STAGE 1: INGESTION & BOUNDARY LAYER (Left Column) -->
+  <g transform="translate(40, 100)">
+    <!-- Container -->
+    <rect width="250" height="540" class="box" />
+    <text x="20" y="32" class="header-text">1. INGESTION &amp; TENANCY</text>
+
+    <!-- Node: Cloud Cost Producers -->
+    <g transform="translate(16, 50)">
+      <rect width="218" height="96" class="box-white" />
+      <text x="14" y="26" class="node-title">Multi-Cloud Ingestion</text>
+      <text x="14" y="46" class="node-desc">AWS CUR, GCP BigQuery,</text>
+      <text x="14" y="62" class="node-desc">Azure Billing &amp; Synthetic Gen</text>
+      <rect x="14" y="72" width="130" height="16" rx="4" fill="#f2f2f3" />
+      <text x="18" y="84" class="badge" fill="#777b86">POST /api/generator</text>
+    </g>
+
+    <!-- Node: JWT & TenantFilter -->
+    <g transform="translate(16, 170)">
+      <rect width="218" height="106" class="box-white" />
+      <text x="14" y="26" class="node-title">Tenant Boundary Filter</text>
+      <text x="14" y="46" class="node-desc">Validates signed JWT token</text>
+      <text x="14" y="62" class="node-desc">Extracts organization_id</text>
+      <rect x="14" y="74" width="168" height="20" rx="4" fill="#fbe1d1" />
+      <text x="20" y="88" class="badge" fill="#5d2a1a">TenantContext.set(orgId)</text>
+    </g>
+
+    <!-- Node: Apache Kafka Topic -->
+    <g transform="translate(16, 300)">
+      <rect width="218" height="120" class="box-dark" />
+      <text x="14" y="26" class="node-title" fill="#ffffff">Apache Kafka [KRaft]</text>
+      <text x="14" y="46" class="node-desc" fill="#a3a6af">Topic: usage-events</text>
+      <text x="14" y="66" class="node-desc" fill="#a3a6af">Keyed by organization_id</text>
+      <rect x="14" y="82" width="170" height="24" rx="4" fill="#2d3139" />
+      <text x="20" y="98" class="badge" fill="#fbe1d1">Per-Tenant FIFO Order</text>
+    </g>
+
+    <!-- Internal Flow Arrows -->
+    <path d="M 125 146 L 125 170" class="arrow" marker-end="url(#arrowhead)" />
+    <path d="M 125 276 L 125 300" class="arrow" marker-end="url(#arrowhead)" />
+  </g>
+
+  <!-- Connect Stage 1 to Stage 2 -->
+  <path d="M 290 460 L 330 460 L 330 200 L 360 200" class="arrow" marker-end="url(#arrowhead)" />
+
+  <!-- 3. STAGE 2: STORAGE & CONTINUOUS ROLLUPS (Center Column) -->
+  <g transform="translate(360, 100)">
+    <!-- Container -->
+    <rect width="250" height="540" class="box" />
+    <text x="20" y="32" class="header-text">2. TIMESCALEDB ENGINE</text>
+
+    <!-- Node: Raw Usage Hypertable -->
+    <g transform="translate(16, 50)">
+      <rect width="218" height="106" class="box-white" />
+      <text x="14" y="26" class="node-title">raw_usage_records</text>
+      <text x="14" y="46" class="node-desc">TimescaleDB Hypertable</text>
+      <text x="14" y="62" class="node-desc">Chunked time partitions</text>
+      <rect x="14" y="74" width="168" height="20" rx="4" fill="#f2f2f3" />
+      <text x="20" y="88" class="badge" fill="#17191c">1-day chunk intervals</text>
+    </g>
+
+    <!-- Node: Continuous Rollups -->
+    <g transform="translate(16, 180)">
+      <rect width="218" height="126" class="box-white" />
+      <text x="14" y="26" class="node-title">Continuous Aggregates</text>
+      <text x="14" y="46" class="node-desc">hourly_cost_rollups</text>
+      <text x="14" y="62" class="node-desc">daily_cost_rollups</text>
+      <text x="14" y="80" class="node-desc">Real-time materialized views</text>
+      <rect x="14" y="94" width="144" height="20" rx="4" fill="#fbe1d1" />
+      <text x="20" y="108" class="badge" fill="#5d2a1a">Sub-5ms Query Latency</text>
+    </g>
+
+    <!-- Node: Date Range Query Service -->
+    <g transform="translate(16, 330)">
+      <rect width="218" height="100" class="box-white" />
+      <text x="14" y="26" class="node-title">Cost Analytics API</text>
+      <text x="14" y="46" class="node-desc">24h, 7d, 30d drilldowns</text>
+      <text x="14" y="62" class="node-desc">Grouped by service &amp; tag</text>
+      <rect x="14" y="72" width="140" height="18" rx="4" fill="#f2f2f3" />
+      <text x="20" y="85" class="badge" fill="#777b86">GET /api/costs/summary</text>
+    </g>
+
+    <!-- Internal Flow Arrows -->
+    <path d="M 125 156 L 125 180" class="arrow" marker-end="url(#arrowhead)" />
+    <path d="M 125 306 L 125 330" class="arrow" marker-end="url(#arrowhead)" />
+  </g>
+
+  <!-- Connect Stage 2 to Stage 3 -->
+  <path d="M 610 240 L 650 240" class="arrow" marker-end="url(#arrowhead)" />
+
+  <!-- 4. STAGE 3: ANOMALY DETECTION (Third Column) -->
+  <g transform="translate(650, 100)">
+    <!-- Container -->
+    <rect width="250" height="540" class="box" />
+    <text x="20" y="32" class="header-text">3. ANOMALY ENGINE</text>
+
+    <!-- Node: Seasonal Baseline Lookup -->
+    <g transform="translate(16, 50)">
+      <rect width="218" height="110" class="box-white" />
+      <text x="14" y="26" class="node-title">Seasonal Cycle Match</text>
+      <text x="14" y="46" class="node-desc">EXTRACT(ISODOW) &amp;</text>
+      <text x="14" y="62" class="node-desc">EXTRACT(HOUR) historicals</text>
+      <rect x="14" y="76" width="168" height="20" rx="4" fill="#f2f2f3" />
+      <text x="20" y="90" class="badge" fill="#17191c">14-Day Cycle Window</text>
+    </g>
+
+    <!-- Node: Rolling Z-Score Calculator -->
+    <g transform="translate(16, 180)">
+      <rect width="218" height="116" class="box-accent" />
+      <text x="14" y="26" class="node-title" fill="#5d2a1a">Rolling Z-Score</text>
+      <text x="14" y="46" class="node-desc" fill="#5d2a1a">Z = (Actual - μ) / σ</text>
+      <text x="14" y="66" class="node-desc" fill="#5d2a1a">Threshold: |Z| &gt; 3.0σ</text>
+      <rect x="14" y="80" width="168" height="22" rx="4" fill="#ffffff" />
+      <text x="20" y="95" class="badge" fill="#5d2a1a">CRITICAL / HIGH / MED</text>
+    </g>
+
+    <!-- Node: Anomaly Repository -->
+    <g transform="translate(16, 320)">
+      <rect width="218" height="110" class="box-white" />
+      <text x="14" y="26" class="node-title">Anomalies Audit Feed</text>
+      <text x="14" y="46" class="node-desc">Persisted anomaly records</text>
+      <text x="14" y="62" class="node-desc">Lifecycle: OPEN → RESOLVED</text>
+      <rect x="14" y="76" width="140" height="18" rx="4" fill="#f2f2f3" />
+      <text x="20" y="89" class="badge" fill="#777b86">GET /api/anomalies</text>
+    </g>
+
+    <!-- Internal Flow Arrows -->
+    <path d="M 125 160 L 125 180" class="arrow-accent" marker-end="url(#arrowhead-accent)" />
+    <path d="M 125 296 L 125 320" class="arrow-accent" marker-end="url(#arrowhead-accent)" />
+  </g>
+
+  <!-- Connect Stage 3 to Stage 4 -->
+  <path d="M 900 240 L 940 240" class="arrow-accent" marker-end="url(#arrowhead-accent)" />
+
+  <!-- 5. STAGE 4: RELIABILITY & OUTBOX (Right Column) -->
+  <g transform="translate(940, 100)">
+    <!-- Container -->
+    <rect width="220" height="540" class="box" />
+    <text x="20" y="32" class="header-text">4. OUTBOX &amp; WEBHOOKS</text>
+
+    <!-- Node: Transactional Outbox -->
+    <g transform="translate(14, 50)">
+      <rect width="192" height="116" class="box-white" />
+      <text x="12" y="24" class="node-title">Transactional Outbox</text>
+      <text x="12" y="44" class="node-desc">Atomic commit with</text>
+      <text x="12" y="60" class="node-desc">budget threshold check</text>
+      <rect x="12" y="74" width="154" height="22" rx="4" fill="#fbe1d1" />
+      <text x="18" y="89" class="badge" fill="#5d2a1a">Zero Lost Alerts</text>
+    </g>
+
+    <!-- Node: Outbox Publisher & Resilience4j -->
+    <g transform="translate(14, 190)">
+      <rect width="192" height="126" class="box-white" />
+      <text x="12" y="24" class="node-title">Webhook Dispatcher</text>
+      <text x="12" y="44" class="node-desc">Resilience4j retry loop</text>
+      <text x="12" y="60" class="node-desc">Exponential backoff</text>
+      <rect x="12" y="76" width="168" height="34" rx="4" fill="#f2f2f3" />
+      <text x="18" y="90" class="badge" fill="#17191c">UNIQUE Constraint</text>
+      <text x="18" y="104" class="badge" fill="#777b86">(event_id, endpoint_id)</text>
+    </g>
+
+    <!-- Node: External Destinations -->
+    <g transform="translate(14, 340)">
+      <rect width="192" height="100" class="box-dark" />
+      <text x="12" y="24" class="node-title" fill="#ffffff">External Endpoints</text>
+      <text x="12" y="44" class="node-desc" fill="#a3a6af">Slack incoming webhooks</text>
+      <text x="12" y="60" class="node-desc" fill="#a3a6af">PagerDuty alerts &amp; custom</text>
+      <text x="12" y="80" class="badge" fill="#fbe1d1">HTTP 200 OK Delivery</text>
+    </g>
+
+    <!-- Internal Flow Arrows -->
+    <path d="M 110 166 L 110 190" class="arrow" marker-end="url(#arrowhead)" />
+    <path d="M 110 316 L 110 340" class="arrow" marker-end="url(#arrowhead)" />
+  </g>
+
+  <!-- Connect Outbox to React Frontend (Bottom Ribbon) -->
+  <g transform="translate(40, 570)">
+    <rect width="1120" height="54" class="box-white" />
+    <text x="24" y="32" class="node-title">Finexa React 19 Frontend (Steep Design System)</text>
+    <text x="420" y="32" class="node-desc">Newsreader Serif Display · Sohne Sans · Live Spend Charts · Interactive Anomaly Acknowledgment · Demo Simulator Drawer</text>
+    <rect x="1000" y="17" width="96" height="20" rx="10" fill="#17191c" />
+    <text x="1014" y="31" class="badge" fill="#ffffff">PORT 5173</text>
+  </g>
+</svg>
