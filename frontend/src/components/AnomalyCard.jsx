@@ -25,12 +25,16 @@ export function AnomalyCard({
     RESOLVED: 'bg-emerald-500/10 text-emerald-700',
   };
 
-  const dateStr = new Date(anomaly.detected_at || anomaly.timestamp).toLocaleString([], {
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  const rawDate = anomaly.detected_at || anomaly.detectedAt || anomaly.timestamp || anomaly.created_at || anomaly.createdAt;
+  const dateObj = rawDate ? new Date(rawDate) : new Date();
+  const dateStr = !isNaN(dateObj.getTime())
+    ? dateObj.toLocaleString([], {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    : 'Recently detected';
 
   return (
     <ArtifactCard className={`transition-all duration-200 ${isCritical ? 'border-sienna-brown/20' : ''}`}>

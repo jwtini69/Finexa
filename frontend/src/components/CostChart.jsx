@@ -11,22 +11,47 @@ import {
 import { ArtifactCard } from './Card';
 
 export function CostChart({ data = [], range = '7d', onRangeChange, loading = false }) {
-  const formattedData = data.map((item) => {
-    const dateObj = new Date(item.bucket_start || item.timestamp);
+  const formattedData = data.map((item, index) => {
+    const rawDate = item.bucket || item.bucket_start || item.bucketStart || item.timestamp || item.date || item.time;
+    const dateObj = rawDate ? new Date(rawDate) : null;
+    const isValidDate = dateObj && !isNaN(dateObj.getTime());
+
+    let timeLabel = `T-${index + 1}`;
+    let fullDateLabel = 'Unknown Time';
+
+    if (isValidDate) {
+      fullDateLabel = dateObj.toLocaleString([], {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+
+      if (range === '24h') {
+        timeLabel = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+      } else if (range === '7d') {
+        timeLabel = `${dateObj.toLocaleDateString([], { month: 'short', day: 'numeric' })} ${dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}`;
+      } else {
+        timeLabel = dateObj.toLocaleDateString([], { month: 'short', day: 'numeric' });
+      }
+    }
+
+    const costValue = Number(item.totalCost ?? item.total_cost ?? item.cost ?? 0);
+
     return {
       ...item,
-      timeLabel: range === '24h'
-        ? dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        : dateObj.toLocaleDateString([], { month: 'short', day: 'numeric', hour: range === '7d' ? '2-digit' : undefined }),
-      cost: Number(item.total_cost || item.cost || 0),
+      timeLabel,
+      fullDateLabel,
+      cost: isNaN(costValue) ? 0 : costValue,
     };
   });
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
+      const dataPoint = payload[0].payload;
       return (
         <div className="bg-ink-black text-paper-white p-3 rounded-xl shadow-xl text-[13px] border border-white/10">
-          <p className="text-slate-gray text-[11px] mb-1">{label}</p>
+          <p className="text-slate-gray text-[11px] mb-1">{dataPoint?.fullDateLabel || label}</p>
           <p className="font-medium text-base text-paper-white">
             ${Number(payload[0].value).toFixed(2)}
           </p>
@@ -55,10 +80,10 @@ export function CostChart({ data = [], range = '7d', onRangeChange, loading = fa
             <button
               key={r}
               onClick={() => onRangeChange(r)}
-              className={`px-3 py-1 text-[13px] font-medium rounded-buttons transition-all ${
+              className={`px-3 py-1 text-[13px] font-medium rounded-buttons transition-all cursor-pointer border-none ${
                 range === r
                   ? 'bg-paper-white text-ink-black shadow-sm'
-                  : 'text-slate-gray hover:text-ink-black'
+                  : 'bg-transparent text-slate-gray hover:text-ink-black'
               }`}
             >
               {r.toUpperCase()}
