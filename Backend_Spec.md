@@ -1,7 +1,7 @@
 # Finexa — Backend Build Spec
 ### Reference document for AI coding agents (Claude Code, Cursor, etc.)
 
-This document is the source of truth for building the backend. Follow the phases **in order** — do not skip ahead or generate later-phase code before earlier phases pass their acceptance criteria. Each phase must be independently runnable and testable before moving to the next.
+
 
 ---
 
