@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { Navbar } from './components/Navbar';
 import { DemoConsole } from './components/DemoConsole';
 import { DashboardPage } from './pages/DashboardPage';
@@ -19,7 +20,7 @@ function AppContent() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && view === 'auth') {
       setView('app');
     }
   }, [isAuthenticated]);
@@ -58,30 +59,30 @@ function AppContent() {
     );
   }
 
-  // 1. If user is on landing page view and not logged in (or explicitly viewing landing)
-  if (view === 'landing' && !isAuthenticated) {
+  // 1. Landing Page View (Always renders when view === 'landing')
+  if (view === 'landing') {
     return (
       <LandingPage
-        onLaunchApp={() => setView('auth')}
+        onLaunchApp={() => setView(isAuthenticated ? 'app' : 'auth')}
         onOpenAuth={() => setView('auth')}
       />
     );
   }
 
-  // 2. If user is on auth screen
+  // 2. Authentication Screen
   if (!isAuthenticated) {
     return (
       <div>
-        <div className="bg-fog-white border-b border-mist-gray px-6 py-2 flex items-center justify-between text-[13px] text-slate-gray">
+        <div className="bg-fog-white border-b border-mist-gray px-6 py-2.5 flex items-center justify-between text-[13px] text-slate-gray">
           <button
             onClick={() => setView('landing')}
-            className="hover:text-ink-black font-medium transition-colors"
+            className="hover:text-ink-black font-medium transition-colors cursor-pointer bg-transparent border-none"
           >
             ← Return to Landing Page
           </button>
           <span>Finexa Authentication</span>
         </div>
-        <AuthPage />
+        <AuthPage onLoginSuccess={() => setView('app')} />
       </div>
     );
   }
@@ -160,8 +161,10 @@ function AppContent() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

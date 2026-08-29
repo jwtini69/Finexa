@@ -1,30 +1,29 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { PillButton } from './PillButton';
-import { Shield, Sparkles, LogOut, Terminal, Users } from 'lucide-react';
+import { Logo } from './Logo';
+import { Sparkles, LogOut } from 'lucide-react';
 
 export function Navbar({ activeTab, setActiveTab, onOpenDemoConsole, openAnomaliesCount = 0 }) {
-  const { user, org, logout, quickLogin } = useAuth();
+  const { user, org, logout } = useAuth();
 
   return (
-    <header className="sticky top-0 z-40 bg-paper-white/85 backdrop-blur-md border-b border-black/[0.04]">
+    <header className="sticky top-0 z-40 bg-paper-white/90 backdrop-blur-md border-b border-black/[0.05] dark:border-white/[0.08] transition-colors">
       <div className="max-w-[1200px] mx-auto px-6 h-20 flex items-center justify-between">
         
         {/* Left: Brand & Navigation */}
-        <div className="flex items-center gap-10">
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveTab('overview')}>
-            <span className="font-signifier text-2xl tracking-tight text-ink-black italic font-normal">
-              Finexa
-            </span>
-            <span className="text-[12px] uppercase tracking-wider text-slate-gray px-2 py-0.5 bg-mist-gray rounded-buttons">
-              FinOps
-            </span>
+        <div className="flex items-center gap-8 lg:gap-10">
+          <div
+            className="cursor-pointer transition-transform active:scale-95 shrink-0"
+            onClick={() => setActiveTab('overview')}
+          >
+            <Logo size={34} showBadge />
           </div>
 
           <nav className="hidden md:flex items-center gap-6">
             <button
               onClick={() => setActiveTab('overview')}
-              className={`text-[15px] font-sohne transition-colors py-1 relative ${
+              className={`text-[15px] font-sohne transition-colors py-1 relative cursor-pointer bg-transparent border-none ${
                 activeTab === 'overview'
                   ? 'text-ink-black font-medium'
                   : 'text-slate-gray hover:text-ink-black'
@@ -32,13 +31,13 @@ export function Navbar({ activeTab, setActiveTab, onOpenDemoConsole, openAnomali
             >
               Overview
               {activeTab === 'overview' && (
-                <span className="absolute bottom-[-16px] left-0 right-0 h-[2px] bg-ink-black rounded-full" />
+                <span className="absolute bottom-[-18px] left-0 right-0 h-[2px] bg-ink-black rounded-full" />
               )}
             </button>
 
             <button
               onClick={() => setActiveTab('anomalies')}
-              className={`text-[15px] font-sohne transition-colors py-1 flex items-center gap-1.5 relative ${
+              className={`text-[15px] font-sohne transition-colors py-1 flex items-center gap-1.5 relative cursor-pointer bg-transparent border-none ${
                 activeTab === 'anomalies'
                   ? 'text-ink-black font-medium'
                   : 'text-slate-gray hover:text-ink-black'
@@ -46,32 +45,32 @@ export function Navbar({ activeTab, setActiveTab, onOpenDemoConsole, openAnomali
             >
               Anomalies
               {openAnomaliesCount > 0 && (
-                <span className="px-1.5 py-0.2 bg-blush-peach text-sienna-brown text-[11px] font-medium rounded-full">
+                <span className="px-1.5 py-0.2 bg-blush-peach text-sienna-brown text-[11px] font-semibold rounded-full border border-sienna-brown/20">
                   {openAnomaliesCount}
                 </span>
               )}
               {activeTab === 'anomalies' && (
-                <span className="absolute bottom-[-16px] left-0 right-0 h-[2px] bg-ink-black rounded-full" />
+                <span className="absolute bottom-[-18px] left-0 right-0 h-[2px] bg-ink-black rounded-full" />
               )}
             </button>
 
             <button
               onClick={() => setActiveTab('budgets')}
-              className={`text-[15px] font-sohne transition-colors py-1 relative ${
+              className={`text-[15px] font-sohne transition-colors py-1 relative cursor-pointer bg-transparent border-none ${
                 activeTab === 'budgets'
                   ? 'text-ink-black font-medium'
                   : 'text-slate-gray hover:text-ink-black'
               }`}
             >
-              Budgets & Webhooks
+              Budgets &amp; Webhooks
               {activeTab === 'budgets' && (
-                <span className="absolute bottom-[-16px] left-0 right-0 h-[2px] bg-ink-black rounded-full" />
+                <span className="absolute bottom-[-18px] left-0 right-0 h-[2px] bg-ink-black rounded-full" />
               )}
             </button>
 
             <button
               onClick={() => setActiveTab('team')}
-              className={`text-[15px] font-sohne transition-colors py-1 relative ${
+              className={`text-[15px] font-sohne transition-colors py-1 relative cursor-pointer bg-transparent border-none ${
                 activeTab === 'team'
                   ? 'text-ink-black font-medium'
                   : 'text-slate-gray hover:text-ink-black'
@@ -79,7 +78,7 @@ export function Navbar({ activeTab, setActiveTab, onOpenDemoConsole, openAnomali
             >
               Team
               {activeTab === 'team' && (
-                <span className="absolute bottom-[-16px] left-0 right-0 h-[2px] bg-ink-black rounded-full" />
+                <span className="absolute bottom-[-18px] left-0 right-0 h-[2px] bg-ink-black rounded-full" />
               )}
             </button>
           </nav>
@@ -99,12 +98,12 @@ export function Navbar({ activeTab, setActiveTab, onOpenDemoConsole, openAnomali
 
           {/* Org & User Badges */}
           {user && (
-            <div className="hidden lg:flex items-center gap-2 px-3 py-1 bg-mist-gray rounded-buttons text-[13px]">
+            <div className="hidden lg:flex items-center gap-2 px-3 py-1 bg-mist-gray rounded-buttons text-[13px] border border-black/[0.04] dark:border-white/[0.08]">
               <span className="font-medium text-ink-black truncate max-w-[130px]">
                 {org?.name || 'Organization'}
               </span>
               <span className="text-slate-gray">•</span>
-              <span className="uppercase text-[11px] tracking-wider text-sienna-brown font-medium px-1.5 py-0.5 bg-blush-peach/60 rounded-full">
+              <span className="uppercase text-[11px] tracking-wider text-sienna-brown font-semibold px-2 py-0.5 bg-blush-peach/80 rounded-full border border-sienna-brown/20">
                 {user.role}
               </span>
             </div>
@@ -114,7 +113,7 @@ export function Navbar({ activeTab, setActiveTab, onOpenDemoConsole, openAnomali
           <button
             onClick={logout}
             title="Log out"
-            className="w-9 h-9 flex items-center justify-center rounded-full text-slate-gray hover:text-ink-black hover:bg-mist-gray transition-colors"
+            className="w-9 h-9 flex items-center justify-center rounded-full text-slate-gray hover:text-ink-black hover:bg-mist-gray dark:hover:bg-white/10 transition-colors cursor-pointer border-none bg-transparent"
           >
             <LogOut className="w-4 h-4" />
           </button>

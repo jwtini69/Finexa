@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -7,13 +8,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        'ink-black': '#17191c',
-        'paper-white': '#ffffff',
-        'mist-gray': '#f2f2f3',
-        'fog-white': '#fafafb',
-        'slate-gray': '#777b86',
-        'ash-gray': '#979799',
-        'smoke-gray': '#a3a6af',
+        'ink-black': 'var(--color-ink-black)',
+        'paper-white': 'var(--color-paper-white)',
+        'mist-gray': 'var(--color-mist-gray)',
+        'fog-white': 'var(--color-fog-white)',
+        'slate-gray': 'var(--color-slate-gray)',
+        'ash-gray': 'var(--color-ash-gray)',
+        'smoke-gray': 'var(--color-smoke-gray)',
         'blush-peach': '#fbe1d1',
         'sienna-brown': '#5d2a1a',
       },
