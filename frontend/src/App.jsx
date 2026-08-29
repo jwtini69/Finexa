@@ -9,6 +9,7 @@ import { BudgetsPage } from './pages/BudgetsPage';
 import { TeamPage } from './pages/TeamPage';
 import { AuthPage } from './pages/AuthPage';
 import { LandingPage } from './pages/LandingPage';
+import { Logo } from './components/Logo';
 import { getAnomalies } from './api/anomalies';
 
 function AppContent() {
@@ -50,10 +51,8 @@ function AppContent() {
     return (
       <div className="min-h-screen bg-paper-white flex items-center justify-center text-slate-gray">
         <div className="flex flex-col items-center gap-3">
-          <span className="font-signifier text-3xl italic text-ink-black animate-pulse">
-            Finexa
-          </span>
-          <span className="text-[13px]">Initializing FinOps Workspace...</span>
+          <Logo size={44} showBadge />
+          <span className="text-[13px] text-slate-gray mt-2 animate-pulse">Initializing FinOps Workspace...</span>
         </div>
       </div>
     );

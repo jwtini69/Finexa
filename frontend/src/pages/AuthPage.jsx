@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { PillButton } from '../components/PillButton';
 import { ArtifactCard, NeutralCard } from '../components/Card';
+import { Logo } from '../components/Logo';
 import { Sparkles, Shield, ArrowRight, Lock, Mail, Building } from 'lucide-react';
 
 export function AuthPage() {
@@ -50,14 +51,7 @@ export function AuthPage() {
       
       {/* Top Bar Brand */}
       <header className="max-w-[1200px] w-full mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <span className="font-signifier text-3xl tracking-tight text-ink-black italic font-normal">
-            Finexa
-          </span>
-          <span className="text-[12px] uppercase tracking-wider text-slate-gray px-2 py-0.5 bg-mist-gray rounded-buttons">
-            FinOps
-          </span>
-        </div>
+        <Logo size={36} showBadge />
       </header>
 
       {/* Center Auth Container */}

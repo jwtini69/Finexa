@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { PillButton } from './PillButton';
+import { Logo } from './Logo';
 import { triggerBackfill, injectSpike, triggerTick, getSystemHealth } from '../api/generator';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -92,23 +93,21 @@ export function DemoConsole({ isOpen, onClose, onRefreshAll }) {
         <div className="space-y-6">
           {/* Header */}
           <div className="flex items-center justify-between pb-4 border-b border-mist-gray">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-blush-peach flex items-center justify-center text-sienna-brown">
-                <Sparkles className="w-4 h-4" />
-              </div>
-              <div>
-                <h3 className="font-signifier text-xl font-normal text-ink-black">
-                  Demo & Failure Console
+            <div className="flex items-center gap-3">
+              <Logo size={30} />
+              <div className="border-l border-mist-gray pl-3">
+                <h3 className="font-signifier text-lg font-normal text-ink-black leading-tight">
+                  Demo &amp; Failure Console
                 </h3>
-                <p className="text-[12px] text-slate-gray">
-                  Interactive simulation controls for interviews
+                <p className="text-[11px] text-slate-gray">
+                  Interactive simulation controls
                 </p>
               </div>
             </div>
 
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-full flex items-center justify-center text-slate-gray hover:text-ink-black hover:bg-mist-gray transition-colors"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-slate-gray hover:text-ink-black hover:bg-mist-gray transition-colors cursor-pointer border-none bg-transparent"
             >
               <X className="w-4 h-4" />
             </button>
